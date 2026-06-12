@@ -1,0 +1,40 @@
+---
+import { Code } from 'astro:components';
+import tronTheme from '~/theme/tron';
+
+// Hand-placed code in the ghosted-Tron terminal chrome. Markdown fences get the
+// same chrome automatically via the Shiki transformer; this is for code placed
+// directly in .astro pages. Chrome styling lives in `.gc-terminal` (tailwind.css).
+//
+// Optional `prompt` renders a faux terminal output line under the code (the
+// `›` line from design/ground-control.html). The blinking cursor is NOT placed
+// here — a site-wide script (PageLayout.astro) drops one cursor on the LAST
+// terminal of each page (see docs/superpowers/specs/2026-06-11-terminal-cursor-identity-design.md).
+export interface Props {
+  code: string;
+  lang?: string;
+  title?: string;
+  prompt?: string;
+}
+
+const { code, lang = 'text', title, prompt } = Astro.props;
+const label = title ?? lang;
+---
+
+<div class="gc-terminal">
+  <div class="gc-term-head">
+    <span class="gc-term-dot r"></span>
+    <span class="gc-term-dot y"></span>
+    <span class="gc-term-dot g"></span>
+    <span class="gc-term-title">{label}</span>
+    <span class="gc-term-copy" data-gc-copy>copy</span>
+  </div>
+  <Code code={code} lang={lang as never} theme={tronTheme} />
+  {
+    prompt && (
+      <div class="gc-term-prompt">
+        <span class="gc-term-prompt-mark">›</span> {prompt}
+      </div>
+    )
+  }
+</div>

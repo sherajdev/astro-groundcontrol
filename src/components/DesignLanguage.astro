@@ -1,0 +1,99 @@
+---
+// Visual showcase of the Ground Control design language, built to embed inside a
+// blog post. Uses only div/span + Pill + ComicPanel — tags that `.gc-prose` does
+// not restyle — so it reads correctly inside post prose. Tokens flip in dark.
+import Pill from '~/components/ui/Pill.astro';
+import ComicPanel from '~/components/ui/ComicPanel.astro';
+import avatar from '~/assets/images/avatar.png';
+
+const principles = [
+  ['01', 'One loud thing per screen', 'The comic, or the terminal, or a spot of orange. Never two at once.'],
+  ['02', 'Mono is the connective tissue', 'Every label, date, and tag is IBM Plex Mono.'],
+  ['03', 'Hairlines over boxes', '1px lines and whitespace do the structural work.'],
+  ['04', 'One spot color per page', 'Burnt orange shows up exactly once.'],
+  ['05', 'Texture, not decoration', 'Halftone and grids live at low opacity.'],
+];
+
+const swatches = [
+  ['bg-bg', 'bg', 'border border-line'],
+  ['bg-surface', 'surface', 'border border-line'],
+  ['bg-surface-2', 'surface-2', 'border border-line'],
+  ['bg-ink', 'ink', ''],
+  ['bg-steel', 'steel', ''],
+  ['bg-steel-deep', 'steel-deep', ''],
+  ['bg-spot', 'spot', ''],
+];
+---
+
+<div class="not-prose my-2 space-y-10">
+  <!-- Principles -->
+  <div>
+    <div class="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-faint">the five principles</div>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        principles.map(([n, title, body]) => (
+          <div class="border border-line bg-surface p-4">
+            <span class="font-mono text-[11px] tracking-[0.1em] text-steel">{n}</span>
+            <div class="mt-1.5 font-display text-[16px] font-bold tracking-[-0.01em] text-ink">{title}</div>
+            <div class="mt-1 font-body text-[14.5px] leading-[1.5] text-muted">{body}</div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Palette -->
+  <div>
+    <div class="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-faint">the palette</div>
+    <div class="grid grid-cols-3 gap-2 sm:grid-cols-7">
+      {
+        swatches.map(([cls, name, extra]) => (
+          <div>
+            <div class={`h-16 rounded-sm ${cls} ${extra}`} />
+            <div class="mt-1.5 font-mono text-[10.5px] text-muted">{name}</div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Type -->
+  <div>
+    <div class="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-faint">three fonts, three jobs</div>
+    <div class="space-y-4 border border-line bg-surface p-6">
+      <div>
+        <span class="font-mono text-[10.5px] text-faint">display · bricolage grotesque</span>
+        <div class="font-display text-4xl font-extrabold tracking-[-0.02em] text-ink">Ground Control</div>
+      </div>
+      <div>
+        <span class="font-mono text-[10.5px] text-faint">body · newsreader</span>
+        <div class="font-body text-lg text-ink-2">
+          The reading voice of the site — a warm serif for anything longer than a label.
+        </div>
+      </div>
+      <div>
+        <span class="font-mono text-[10.5px] text-faint">mono · ibm plex mono</span>
+        <div class="font-mono text-[13px] text-ink-2">const status = "nominal"; // labels, meta, code</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Badges -->
+  <div>
+    <div class="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-faint">mono badges</div>
+    <div class="flex flex-wrap gap-2">
+      <Pill variant="solid">note</Pill>
+      <Pill variant="steel">post</Pill>
+      <Pill>astro</Pill>
+      <Pill variant="ghost">build-in-public</Pill>
+    </div>
+  </div>
+
+  <!-- The one loud thing -->
+  <div>
+    <div class="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-faint">the one loud thing</div>
+    <div class="flex justify-center py-6">
+      <ComicPanel src={avatar.src} alt="Placeholder artwork" caption="YOUR NAME //" captionStrong="now shipping" />
+    </div>
+  </div>
+</div>

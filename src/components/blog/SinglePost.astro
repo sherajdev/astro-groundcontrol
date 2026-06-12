@@ -1,0 +1,82 @@
+---
+import Image from '~/components/common/Image.astro';
+import PostTags from '~/components/blog/Tags.astro';
+import SocialShare from '~/components/common/SocialShare.astro';
+
+import { getPermalink } from '~/utils/permalinks';
+import { getFormattedDate } from '~/utils/utils';
+
+import type { Post } from '~/types';
+
+export interface Props {
+  post: Post;
+  url: string | URL;
+}
+
+const { post, url } = Astro.props;
+---
+
+<section class="py-12 md:py-16">
+  <article>
+    <header class="mx-auto max-w-3xl px-6">
+      <!-- kicker: category -->
+      <div class="mb-5 flex items-center gap-3 font-mono text-[11.5px] uppercase tracking-[0.22em] text-steel-deep">
+        <span class="h-px w-[26px] bg-steel"></span>
+        {
+          post.category ? (
+            <a class="transition-colors hover:text-spot" href={getPermalink(post.category.slug, 'category')}>
+              {post.category.title}
+            </a>
+          ) : (
+            <span>writing</span>
+          )
+        }
+      </div>
+
+      <h1 class="font-display text-[clamp(34px,5vw,58px)] font-extrabold leading-[0.98] tracking-[-0.03em] text-ink">
+        {post.title}
+      </h1>
+
+      {post.excerpt && <p class="mt-5 max-w-[60ch] font-body text-[19px] leading-relaxed text-ink-2">{post.excerpt}</p>}
+
+      <!-- mono meta -->
+      <div
+        class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11.5px] tracking-[0.04em] text-muted"
+      >
+        <time datetime={String(post.publishDate)}>{getFormattedDate(post.publishDate)}</time>
+        {post.author && <span>· {post.author}</span>}
+        {post.readingTime && <span>· {post.readingTime} min read</span>}
+      </div>
+
+      {
+        post.image ? (
+          <Image
+            src={post.image}
+            class="mx-auto mt-9 w-full rounded-md border border-line bg-surface-2"
+            widths={[400, 900]}
+            sizes="(max-width: 900px) 400px, 900px"
+            alt={post?.excerpt || ''}
+            width={900}
+            height={506}
+            format="webp"
+            loading="eager"
+            decoding="async"
+          />
+        ) : (
+          <div class="mt-8 border-t border-line" />
+        )
+      }
+    </header>
+
+    <div class="gc-prose mx-auto mt-10 max-w-3xl px-6">
+      <slot />
+    </div>
+
+    <footer
+      class="mx-auto mt-12 flex max-w-3xl flex-col gap-5 border-t border-line px-6 pt-6 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <PostTags tags={post.tags} />
+      <SocialShare url={url} text={post.title} class="text-muted" />
+    </footer>
+  </article>
+</section>

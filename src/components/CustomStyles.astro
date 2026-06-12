@@ -1,0 +1,38 @@
+---
+// Ground Control's three typefaces, loaded via Fontsource (no CDN).
+import '@fontsource-variable/bricolage-grotesque/wght.css'; // display / headings
+import '@fontsource-variable/newsreader/wght.css'; // body / prose (roman)
+import '@fontsource-variable/newsreader/wght-italic.css'; // body / prose (italic)
+import '@fontsource/ibm-plex-mono/400.css'; // labels / nav / meta / code
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
+---
+
+<style is:inline>
+  /* Remap AstroWind's --aw-* variables onto Ground Control tokens so its
+     components inherit the theme instead of fighting it. The --gc-* tokens
+     (defined in tailwind.css) already flip under .dark, so referencing them
+     here makes everything dark-correct without per-property dark overrides. */
+  :root {
+    --aw-font-sans: 'Newsreader Variable', Newsreader, Georgia, serif;
+    --aw-font-serif: 'Newsreader Variable', Newsreader, Georgia, serif;
+    --aw-font-heading: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', sans-serif;
+
+    --aw-color-primary: var(--gc-steel-deep);
+    --aw-color-secondary: var(--gc-steel);
+    --aw-color-accent: var(--gc-spot);
+
+    --aw-color-text-heading: var(--gc-ink);
+    --aw-color-text-default: var(--gc-ink);
+    --aw-color-text-page: var(--gc-ink);
+    --aw-color-text-muted: var(--gc-muted);
+
+    --aw-color-bg-page: var(--gc-bg);
+    --aw-color-bg-page-dark: var(--gc-surface);
+  }
+
+  ::selection {
+    background-color: var(--gc-steel-wash);
+    color: var(--gc-ink);
+  }
+</style>

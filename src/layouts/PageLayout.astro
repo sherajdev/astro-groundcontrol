@@ -1,0 +1,89 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/widgets/Header.astro';
+import Footer from '~/components/widgets/Footer.astro';
+
+import { headerData, footerData } from '~/navigation';
+
+import type { MetaData } from '~/types';
+
+export interface Props {
+  metadata?: MetaData;
+}
+
+const { metadata } = Astro.props;
+---
+
+<Layout metadata={metadata}>
+  <slot name="header">
+    <Header {...headerData} isSticky showToggleTheme />
+  </slot>
+  <main>
+    <slot />
+  </main>
+  <slot name="footer">
+    <Footer {...footerData} />
+  </slot>
+</Layout>
+
+<script>
+  // Copy-to-clipboard for the terminal chrome (CodeBlock + markdown fences).
+  // Bound once on window so View Transitions navigations don't stack listeners.
+  if (!(window as unknown as { __gcCopyBound?: boolean }).__gcCopyBound) {
+    (window as unknown as { __gcCopyBound?: boolean }).__gcCopyBound = true;
+    document.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement)?.closest?.('[data-gc-copy]');
+      if (!btn) return;
+      const pre = btn.closest('.gc-terminal')?.querySelector('pre');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const prev = btn.textContent;
+        btn.textContent = 'copied';
+        setTimeout(() => {
+          btn.textContent = prev;
+        }, 1200);
+      });
+    });
+  }
+</script>
+
+<script>
+  // "Which terminal is alive on this page" — places ONE blinking cursor on the
+  // LAST .gc-terminal inside <main>; all other code blocks stay cursor-free.
+  // See docs/superpowers/specs/2026-06-11-terminal-cursor-identity-design.md.
+  // Runs on astro:page-load so it fires on first load AND after every View
+  // Transition navigation. Cursor is decorative (aria-hidden), so no-JS loses
+  // nothing.
+  function gcPlaceTerminalCursor() {
+    // Idempotency: never add a second cursor to a page.
+    if (document.querySelector('.term-cursor')) return;
+
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    const terminals = main.querySelectorAll('.gc-terminal');
+    if (terminals.length === 0) return;
+
+    const last = terminals[terminals.length - 1];
+
+    const cursor = document.createElement('span');
+    cursor.className = 'term-cursor';
+    cursor.setAttribute('aria-hidden', 'true');
+
+    // If the last terminal already has an output line (the home page's
+    // `› build complete …`), tuck the cursor inline at its end; otherwise add a
+    // trailing line holding just the cursor (plain blog/work fences).
+    const existingPrompt = last.querySelector<HTMLElement>(':scope > .gc-term-prompt');
+    if (existingPrompt) {
+      existingPrompt.appendChild(document.createTextNode(' '));
+      existingPrompt.appendChild(cursor);
+    } else {
+      const line = document.createElement('div');
+      line.className = 'gc-term-prompt';
+      line.appendChild(cursor);
+      last.appendChild(line);
+    }
+  }
+
+  document.addEventListener('astro:page-load', gcPlaceTerminalCursor);
+</script>

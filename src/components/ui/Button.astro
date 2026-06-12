@@ -1,0 +1,53 @@
+---
+import { Icon } from 'astro-icon/components';
+import { twMerge } from 'tailwind-merge';
+
+// Ground Control button: squared mono, hairline border. solid / ghost / steel,
+// plus a borderless `link` variant. Renders <button> when `type` is set,
+// otherwise an <a>.
+export interface Props {
+  variant?: 'solid' | 'ghost' | 'steel' | 'link';
+  text?: string;
+  icon?: string;
+  href?: string | URL;
+  target?: string;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  variant = 'solid',
+  target,
+  text = Astro.slots.render('default'),
+  icon = '',
+  type,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const base =
+  'inline-flex items-center justify-center font-mono text-[13px] tracking-[0.03em] transition-colors cursor-pointer';
+const variants: Record<string, string> = {
+  solid: 'border px-5 py-2.5 bg-ink text-bg border-ink hover:bg-steel-deep hover:border-steel-deep hover:text-white',
+  ghost: 'border px-5 py-2.5 bg-transparent text-ink border-ink hover:bg-ink hover:text-bg',
+  steel: 'border px-5 py-2.5 bg-steel text-white border-steel hover:bg-steel-deep hover:border-steel-deep',
+  link: 'text-steel-deep hover:text-spot',
+};
+
+const cls = twMerge(base, variants[variant] ?? variants.solid, className);
+---
+
+{
+  type ? (
+    <button type={type} class={cls} {...rest}>
+      <Fragment set:html={text} />
+      {icon && <Icon name={icon} class="ml-1.5 inline-block h-4 w-4" />}
+    </button>
+  ) : (
+    <a class={cls} {...(target ? { target, rel: 'noopener noreferrer' } : {})} {...rest}>
+      <Fragment set:html={text} />
+      {icon && <Icon name={icon} class="ml-1.5 inline-block h-4 w-4" />}
+    </a>
+  )
+}

@@ -1,0 +1,24 @@
+---
+// Ground Control section headline: mono kicker (steel rule) + display title + lead.
+const {
+  title = await Astro.slots.render('default'),
+  subtitle = await Astro.slots.render('subtitle'),
+  kicker,
+} = Astro.props;
+---
+
+<header class="mb-10 md:mb-14">
+  {
+    kicker && (
+      <div class="mb-[22px] flex items-center gap-3 font-mono text-[11.5px] uppercase tracking-[0.22em] text-steel-deep">
+        <span class="h-px w-[26px] bg-steel" />
+        <Fragment set:html={kicker} />
+      </div>
+    )
+  }
+  <h1
+    class="font-display text-[clamp(36px,5.5vw,64px)] font-extrabold leading-[0.98] tracking-[-0.03em] text-ink"
+    set:html={title}
+  />
+  {subtitle && <div class="mt-4 max-w-[62ch] font-body text-[19px] text-ink-2" set:html={subtitle} />}
+</header>

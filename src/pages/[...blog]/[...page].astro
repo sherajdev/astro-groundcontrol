@@ -1,0 +1,76 @@
+---
+import type { InferGetStaticPropsType, GetStaticPaths } from 'astro';
+
+import Layout from '~/layouts/PageLayout.astro';
+import BlogList from '~/components/blog/List.astro';
+import Headline from '~/components/blog/Headline.astro';
+import Pagination from '~/components/blog/Pagination.astro';
+import ProjectCard from '~/components/ui/ProjectCard.astro';
+
+import { blogListRobots, getStaticPathsBlogList } from '~/utils/blog';
+import { getPermalink } from '~/utils/permalinks';
+import { getDottedDate } from '~/utils/utils';
+
+export const prerender = true;
+
+export const getStaticPaths = (async ({ paginate }) => {
+  return await getStaticPathsBlogList({ paginate });
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { page } = Astro.props as Props;
+const currentPage = page.currentPage ?? 1;
+const isFirst = currentPage === 1;
+
+// On page 1, lead with a couple of featured cards; the rest stack as a dated list.
+const featured = isFirst ? page.data.slice(0, 2) : [];
+const rest = isFirst ? page.data.slice(2) : page.data;
+
+const metadata = {
+  title: `Blog${currentPage > 1 ? ` — Page ${currentPage}` : ''}`,
+  robots: {
+    index: blogListRobots?.index && currentPage === 1,
+    follow: blogListRobots?.follow,
+  },
+  openGraph: { type: 'blog' },
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="mx-auto max-w-5xl px-6 pb-24 pt-16">
+    <Headline
+      kicker="writing"
+      subtitle="Notes on building things — architecture, tooling, and the occasional war story."
+    >
+      The Blog
+    </Headline>
+
+    {
+      featured.length > 0 && (
+        <div class="mb-14 grid gap-[18px] md:grid-cols-2">
+          {featured.map((post) => (
+            <ProjectCard
+              title={post.title}
+              href={getPermalink(post.permalink, 'post')}
+              thumbLabel={post.category?.title ?? post.tags?.[0]?.title ?? 'post'}
+              badge={{ text: post.category?.title ?? 'post', variant: 'steel' }}
+              meta={getDottedDate(post.publishDate, post.readingTime)}
+              description={post.excerpt}
+            />
+          ))}
+        </div>
+      )
+    }
+
+    <BlogList posts={rest} />
+    <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
+
+    <div class="mt-12 border-t border-line pt-6 font-mono text-[11.5px] uppercase tracking-[0.12em] text-muted">
+      browse —
+      <a class="transition-colors hover:text-ink" href={getPermalink('/tags')}> tags </a>
+      ·
+      <a class="transition-colors hover:text-ink" href={getPermalink('/categories')}> categories </a>
+    </div>
+  </section>
+</Layout>

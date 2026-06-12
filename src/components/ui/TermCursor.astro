@@ -1,0 +1,13 @@
+---
+// Blinking ghosted-Tron terminal cursor. A deliberate accent — drop it at the
+// end of a line inside a terminal/code block (e.g. the CodeBlock chrome). All
+// styling lives in the `term-cursor` utility (tailwind.css); this is just the
+// span so it can be reused without re-typing the class.
+//
+//   import TermCursor from '~/components/ui/TermCursor.astro';
+//   ...<span class="prompt">›</span> build complete<TermCursor />
+//
+// Decorative only, so it's hidden from assistive tech.
+---
+
+<span class="term-cursor" aria-hidden="true"></span>

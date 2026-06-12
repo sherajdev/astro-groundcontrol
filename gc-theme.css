@@ -1,0 +1,107 @@
+/* ============================================================
+   GROUND CONTROL — design tokens for Tailwind v4
+   ------------------------------------------------------------
+   WHERE THIS GOES:
+   AstroWind's tokens live in  src/assets/styles/tailwind.css
+   That file ALREADY starts with `@import "tailwindcss";`.
+   Paste everything BELOW that import line. Replace AstroWind's
+   existing @theme colour block; keep its @utility/plugin lines.
+   ============================================================ */
+
+/* Match AstroWind's class-based dark toggle (it sets `dark` on <html>).
+   If AstroWind's toggle sets a different selector, align this to it. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---- semantic tokens that FLIP with dark mode ---- */
+:root {
+  --gc-bg: #e8eaec;
+  --gc-surface: #fafaf9;
+  --gc-surface-2: #f1f2f1;
+  --gc-ink: #15171b;
+  --gc-ink-2: #3c424a;
+  --gc-muted: #737b85;
+  --gc-faint: #9aa1aa;
+  --gc-line: #d3d7dc;
+  --gc-line-strong: #bcc2c8;
+  --gc-steel: #5b7c99;
+  --gc-steel-deep: #3f5c76; /* links / emphasis */
+  --gc-steel-soft: #a9bccd; /* fills, thumbnails, avatar panel */
+  --gc-steel-wash: #dbe3eb; /* faint tints */
+  --gc-spot: #bc6a2c; /* the once-per-page pop */
+}
+
+.dark {
+  --gc-bg: #0f1216;
+  --gc-surface: #171b21;
+  --gc-surface-2: #1e232b;
+  --gc-ink: #e5e8eb;
+  --gc-ink-2: #aeb6bf;
+  --gc-muted: #828a94;
+  --gc-faint: #5e6670;
+  --gc-line: #262c34;
+  --gc-line-strong: #353c45;
+  --gc-steel: #6e93b4;
+  --gc-steel-deep: #a8c5df; /* links go LIGHTER on dark */
+  --gc-steel-soft: #33424f; /* dark steel fill on dark */
+  --gc-steel-wash: #232f3a;
+  --gc-spot: #d98841; /* slightly brighter burnt orange */
+}
+
+/* ---- terminal tokens: ALWAYS dark, never flip ---- */
+:root {
+  --gc-term-bg: #0a0d12;
+  --gc-term-panel: #0d131b;
+  --gc-term-border: #1b2733;
+  --gc-term-text: #b9c9d6;
+  --gc-term-cyan: #74bbd8; /* keyword + prompt */
+  --gc-term-blue: #8fb2d4; /* function */
+  --gc-term-green: #86b8a6; /* string */
+  --gc-term-dim: #435a6b; /* comment + gutter */
+  --gc-term-spot: #cb8e5c; /* number */
+}
+
+/* ---- register as Tailwind utilities ----
+   `@theme inline` keeps the var() reference at the use-site, so utilities
+   like `bg-bg` / `text-ink` resolve through :root vs .dark automatically. */
+@theme inline {
+  --color-bg: var(--gc-bg);
+  --color-surface: var(--gc-surface);
+  --color-surface-2: var(--gc-surface-2);
+  --color-ink: var(--gc-ink);
+  --color-ink-2: var(--gc-ink-2);
+  --color-muted: var(--gc-muted);
+  --color-faint: var(--gc-faint);
+  --color-line: var(--gc-line);
+  --color-line-strong: var(--gc-line-strong);
+  --color-steel: var(--gc-steel);
+  --color-steel-deep: var(--gc-steel-deep);
+  --color-steel-soft: var(--gc-steel-soft);
+  --color-steel-wash: var(--gc-steel-wash);
+  --color-spot: var(--gc-spot);
+
+  --color-term-bg: var(--gc-term-bg);
+  --color-term-panel: var(--gc-term-panel);
+  --color-term-border: var(--gc-term-border);
+  --color-term-text: var(--gc-term-text);
+  --color-term-cyan: var(--gc-term-cyan);
+  --color-term-blue: var(--gc-term-blue);
+  --color-term-green: var(--gc-term-green);
+  --color-term-dim: var(--gc-term-dim);
+  --color-term-spot: var(--gc-term-spot);
+
+  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', sans-serif;
+  --font-body: 'Newsreader Variable', 'Newsreader', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* ---- textures (use sparingly, low opacity) ---- */
+@utility halftone {
+  background-image: radial-gradient(var(--gc-ink) 0.7px, transparent 0.8px);
+  background-size: 5px 5px;
+}
+@utility gridlines {
+  background-image:
+    linear-gradient(to right, var(--gc-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--gc-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+}

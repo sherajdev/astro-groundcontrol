@@ -1,0 +1,101 @@
+---
+title: 'The design language behind this site'
+publishDate: 2026-06-10T00:00:00Z
+excerpt: 'A visual tour of the rules this whole site is built on — the palette, the type, the one spot of orange, and the comic panel that breaks the calm.'
+category: Design
+tags:
+  - design-system
+  - ground-control
+  - css
+author: Ground Control
+draft: false
+---
+
+import DesignLanguage from '~/components/DesignLanguage.astro';
+
+Before I wrote a single component for this site, I wrote down the rules. The whole look
+lives in one static mockup file plus a short list of principles, and every page is built
+to match it instead of being designed on the fly. Here's the entire language on one
+screen. After that I'll go through why each piece is there.
+
+<DesignLanguage />
+
+## Five rules, and what they buy me
+
+The list is short on purpose. A long style guide is one nobody follows, including me at
+2 a.m.
+
+The one I lean on hardest is _one loud thing per screen_. Each page gets a single
+element that's allowed to shout and everything else stays quiet. On the home page it's
+the comic panel. In a blog post it's the code. When the rest of the page is calm, that
+one thing actually registers.
+
+The other four are guardrails. Mono type on every label threads a "machine" feeling
+through the serif body. Structure comes from 1px hairlines and whitespace, not boxes and
+shadows. Texture stays faint. And there's a hard cap of one spot color per page, which is
+the rule people notice last and feel first.
+
+## Steel, ink, and a single drop of orange
+
+The palette is mostly greys and a muted steel blue. Nothing in it wants attention, which
+is the point. It's defined as a small set of semantic tokens, and those tokens are what
+flip when you toggle dark mode:
+
+```css title="src/assets/styles/tailwind.css"
+:root {
+  --gc-ink: #15171b; /* text */
+  --gc-steel: #5b7c99; /* the calm accent */
+  --gc-steel-deep: #3f5c76; /* links */
+  --gc-spot: #bc6a2c; /* burnt orange — once per page */
+}
+```
+
+Burnt orange is the whole budget. It's the status dot up in the header, or one active
+link, or a hover. I never let it appear twice on the same page. Toggle the theme on this
+post and watch the swatches above move; the orange just gets a touch brighter and stays
+exactly as rare.
+
+## Three fonts doing three jobs
+
+There are three typefaces and each one has a job, so I never have to decide font per
+element. Bricolage Grotesque is the display face for headings. Newsreader, a serif, is
+the body you're reading now. IBM Plex Mono handles anything that reads as metadata: dates,
+tags, labels, and all code. They load through Fontsource, no CDN.
+
+## Every code block is a terminal
+
+This is the part I'm happiest with. Instead of a one-off code component, I wired the look
+into the markdown pipeline, so every fenced block on the site gets the same treatment
+without me thinking about it. They run through a custom Shiki theme and a small
+transformer that wraps each one in faux-terminal chrome:
+
+```ts title="src/theme/tron.ts"
+// the terminal is always dark, in both light and dark mode
+const tron = {
+  name: 'gc-tron',
+  type: 'dark',
+  settings: [
+    { scope: 'comment', settings: { foreground: '#6E8799', fontStyle: 'italic' } },
+    { scope: 'keyword', settings: { foreground: '#74BBD8' } },
+    { scope: 'string', settings: { foreground: '#86B8A6' } },
+    { scope: 'constant.numeric', settings: { foreground: '#CB8E5C' } },
+  ],
+};
+```
+
+Faint grid, slow scanlines, window dots, a low cyan glow. I kept turning the glow down
+until it stopped looking like a screensaver. Put a `title="..."` on the fence and it shows
+up in the window bar, and there's a copy button on every block.
+
+## The comic panel is the exception
+
+Everything above is about restraint, so the site needs one place that isn't. That's the
+drawn avatar up in the showcase: a 3px ink border, a hard offset shadow with no blur, a
+halftone pattern rotated behind it, tilted a degree and a half off straight. The frame is
+drawn with the ink token, so it still reads when the page flips to dark. I only let it
+appear on the home page and the about page. Put it everywhere and it stops being the loud
+thing.
+
+If you want to poke at all of this in isolation, there's a `/styleguide` page that renders
+the same swatches and type in light and dark, side by side. I built it for myself on day
+two and never took it down.

@@ -1,0 +1,52 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import ProjectCard from '~/components/ui/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+import { getPermalink } from '~/utils/permalinks';
+
+const metadata = {
+  title: 'Work',
+  description: 'Selected projects — what I’ve shipped and how it was built.',
+};
+
+const items = (await getCollection('work', ({ data }) => !data.draft)).sort((a, b) => {
+  const ao = a.data.order ?? 999;
+  const bo = b.data.order ?? 999;
+  if (ao !== bo) return ao - bo;
+  return (b.data.publishDate?.getTime() ?? 0) - (a.data.publishDate?.getTime() ?? 0);
+});
+
+const cardMeta = (data: (typeof items)[number]['data']) =>
+  [data.year, ...(data.stack ?? []).slice(0, 2)].filter(Boolean).join(' · ');
+---
+
+<Layout metadata={metadata}>
+  <section class="mx-auto max-w-6xl px-6 pb-24 pt-16">
+    <div class="mb-[22px] flex items-center gap-3 font-mono text-[11.5px] uppercase tracking-[0.22em] text-steel-deep">
+      <span class="h-px w-[26px] bg-steel"></span>
+      <span class="text-faint">01</span> &nbsp;selected work
+    </div>
+    <h1 class="font-display text-[clamp(40px,6vw,72px)] font-extrabold leading-[0.96] tracking-[-0.03em] text-ink">
+      Work<em class="not-italic text-steel">.</em>
+    </h1>
+    <p class="mt-5 max-w-[62ch] font-body text-[19px] text-ink-2">
+      Projects worth a closer look — each one a short writeup of what it does and how it was built. Code renders the way
+      it does everywhere here: in the terminal.
+    </p>
+
+    <div class="mt-12 grid gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
+      {
+        items.map((p) => (
+          <ProjectCard
+            title={p.data.title}
+            href={getPermalink(`/work/${p.id}`)}
+            thumbLabel={p.data.thumbLabel ?? p.data.title}
+            badge={{ text: 'project', variant: 'steel' }}
+            meta={cardMeta(p.data)}
+            description={p.data.excerpt}
+          />
+        ))
+      }
+    </div>
+  </section>
+</Layout>

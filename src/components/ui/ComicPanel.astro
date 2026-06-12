@@ -1,0 +1,31 @@
+---
+// The one loud thing. A 3px ink-framed figure with a hard 7px offset shadow,
+// a counter-rotated halftone backdrop, and a ~1.6° tilt. The frame + shadow use
+// `ink` so they read on both light and dark; the image sits on its own black bg.
+// Visual rules live in `.gc-comic*` (tailwind.css).
+export interface Props {
+  src: string;
+  alt?: string;
+  caption?: string;
+  captionStrong?: string;
+  class?: string;
+}
+
+const { src, alt = '', caption, captionStrong, class: className = '' } = Astro.props;
+---
+
+<div class:list={['gc-comic', className]}>
+  <div class="gc-comic__bg" aria-hidden="true"></div>
+  <figure class="gc-comic__fig">
+    <img src={src} alt={alt} loading="lazy" decoding="async" />
+    {
+      (caption || captionStrong) && (
+        <figcaption class="gc-comic__cap">
+          {caption}
+          {caption && captionStrong ? ' ' : ''}
+          {captionStrong && <b>{captionStrong}</b>}
+        </figcaption>
+      )
+    }
+  </figure>
+</div>

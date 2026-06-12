@@ -1,0 +1,26 @@
+---
+import ListRow from '~/components/ui/ListRow.astro';
+import { getPermalink } from '~/utils/permalinks';
+import { getDottedDate } from '~/utils/utils';
+import type { Post } from '~/types';
+
+export interface Props {
+  posts: Array<Post>;
+}
+
+const { posts } = Astro.props;
+---
+
+<div>
+  {
+    posts.map((post) => (
+      <ListRow
+        title={post.title}
+        href={getPermalink(post.permalink, 'post')}
+        date={getDottedDate(post.publishDate, post.readingTime)}
+        description={post.excerpt}
+        badge={{ text: post.category?.title ?? 'post', variant: 'steel' }}
+      />
+    ))
+  }
+</div>

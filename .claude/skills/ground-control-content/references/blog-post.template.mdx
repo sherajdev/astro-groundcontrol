@@ -1,0 +1,46 @@
+---
+# Rename this file to <slug>.mdx (or .md if no embeds) in src/data/post/
+title: 'Your post title'
+publishDate: 2026-06-09T00:00:00Z # newest two posts lead page 1 as featured cards
+excerpt: 'One or two sentences. Shown on cards and used for SEO.'
+category: Tutorials # ONE category. Reuse: Tutorials, Documentation
+tags: # lowercase-kebab, reuse existing where possible
+  - astro
+  - ground-control
+# image: '~/assets/images/your-hero.png'  # optional post hero
+# author: 'Your name'                       # optional, shows in meta row
+draft: true # remove or set false to publish
+---
+
+{/* Only needed in .mdx, only if you actually embed. Delete if unused. */}
+import { YouTube, Tweet, Vimeo } from 'astro-embed';
+
+Open with a short serif paragraph — what this post is and why it matters. No `#`
+heading here; the title above is the page h1, so start sections at `##`.
+
+## A section heading
+
+Plain markdown prose, **bold** and _italic_ as needed. Reading width and type are
+handled by `.gc-prose` — don't add inline styles.
+
+Embed a video (this is why the file is `.mdx`):
+
+<YouTube id="dQw4w9WgXcQ" />
+
+## Code renders in the terminal
+
+Every fenced block gets the ghosted-Tron chrome automatically. Add a window title
+with `title="..."`:
+
+```ts title="src/example.ts"
+// keyword → cyan, function → blue, string → green, number → orange
+export function greet(name: string) {
+  return `hello, ${name}`;
+}
+```
+
+Inline `code` stays plain — that's intended.
+
+## Close
+
+End with a takeaway. Then verify: `npm run check && npm run build`.

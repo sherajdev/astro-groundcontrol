@@ -1,0 +1,41 @@
+---
+import Pill from './Pill.astro';
+
+// Featured-work card: a halftone steel thumbnail with a big blended label,
+// then mono meta row, display title, and a muted blurb.
+export interface Props {
+  title: string;
+  href?: string;
+  thumbLabel?: string;
+  badge?: { text: string; variant?: 'default' | 'solid' | 'steel' | 'ghost' };
+  meta?: string;
+  description?: string;
+  class?: string;
+}
+
+const { title, href = '#', thumbLabel = '', badge, meta, description, class: className = '' } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={[
+    'group block overflow-hidden border border-line bg-surface transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-[3px] hover:border-line-strong hover:shadow-[0_12px_30px_-18px_rgba(20,30,45,0.4)]',
+    className,
+  ]}
+>
+  <div class="gc-pthumb">
+    {thumbLabel && <b>{thumbLabel}</b>}
+  </div>
+  <div class="px-[18px] pb-5 pt-4">
+    {
+      (badge || meta) && (
+        <div class="mb-[9px] flex items-center gap-2 font-mono text-[11px] text-muted">
+          {badge && <Pill variant={badge.variant ?? 'steel'}>{badge.text}</Pill>}
+          {meta && <span>{meta}</span>}
+        </div>
+      )
+    }
+    <h4 class="font-display text-[18px] font-bold tracking-[-0.01em] text-ink">{title}</h4>
+    {description && <p class="mt-1.5 text-[14.5px] leading-[1.55] text-muted">{description}</p>}
+  </div>
+</a>

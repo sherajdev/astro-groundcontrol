@@ -1,0 +1,197 @@
+---
+// Renders the Ground Control palette + type scale + core components. Designed to
+// be dropped into a `.dark` wrapper as-is to preview dark mode (tokens flip).
+import Pill from '~/components/ui/Pill.astro';
+import Button from '~/components/ui/Button.astro';
+import ProjectCard from '~/components/ui/ProjectCard.astro';
+import ListRow from '~/components/ui/ListRow.astro';
+import ComicPanel from '~/components/ui/ComicPanel.astro';
+import CodeBlock from '~/components/ui/CodeBlock.astro';
+import avatar from '~/assets/images/avatar.png';
+
+const sampleCode = `// ground control — one loud thing
+const palette = ["steel", "ink", "spot"];
+function ship(work: string) {
+  return \`shipped \${work} ✦\`;
+}`;
+
+// Static class strings so Tailwind can see + generate each utility.
+const surfaces = [
+  { cls: 'bg-bg', name: 'bg', note: 'page' },
+  { cls: 'bg-surface', name: 'surface', note: 'cards' },
+  { cls: 'bg-surface-2', name: 'surface-2', note: 'insets' },
+];
+const lines = [
+  { cls: 'border-line', name: 'line' },
+  { cls: 'border-line-strong', name: 'line-strong' },
+];
+const texts = [
+  { cls: 'text-ink', name: 'ink' },
+  { cls: 'text-ink-2', name: 'ink-2' },
+  { cls: 'text-muted', name: 'muted' },
+  { cls: 'text-faint', name: 'faint' },
+];
+const steels = [
+  { cls: 'bg-steel', name: 'steel' },
+  { cls: 'bg-steel-deep', name: 'steel-deep' },
+  { cls: 'bg-steel-soft', name: 'steel-soft' },
+  { cls: 'bg-steel-wash', name: 'steel-wash' },
+  { cls: 'bg-spot', name: 'spot' },
+];
+const terms = [
+  { cls: 'text-term-text', name: 'term-text' },
+  { cls: 'text-term-cyan', name: 'term-cyan' },
+  { cls: 'text-term-blue', name: 'term-blue' },
+  { cls: 'text-term-green', name: 'term-green' },
+  { cls: 'text-term-spot', name: 'term-spot' },
+  { cls: 'text-term-dim', name: 'term-dim' },
+];
+---
+
+<div class="bg-bg text-ink p-8">
+  <!-- Surfaces -->
+  <p class="font-mono text-xs uppercase tracking-widest text-faint">surfaces</p>
+  <div class="mt-3 grid grid-cols-3 gap-3">
+    {
+      surfaces.map((s) => (
+        <div class={`${s.cls} border border-line rounded-md h-20 flex flex-col justify-end p-2`}>
+          <span class="font-mono text-xs text-ink">{s.name}</span>
+          <span class="font-mono text-[10px] text-muted">{s.note}</span>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Lines -->
+  <p class="mt-8 font-mono text-xs uppercase tracking-widest text-faint">hairlines</p>
+  <div class="mt-3 space-y-3">
+    {
+      lines.map((l) => (
+        <div class="flex items-center gap-3">
+          <div class={`flex-1 border-t ${l.cls}`} />
+          <span class="font-mono text-xs text-muted w-28">{l.name}</span>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Text -->
+  <p class="mt-8 font-mono text-xs uppercase tracking-widest text-faint">text</p>
+  <div class="mt-3 space-y-1">
+    {
+      texts.map((t) => (
+        <p class={`${t.cls} font-body text-lg`}>
+          The quick brown fox — <span class="font-mono text-xs">{t.name}</span>
+        </p>
+      ))
+    }
+  </div>
+
+  <!-- Steel + spot -->
+  <p class="mt-8 font-mono text-xs uppercase tracking-widest text-faint">steel &amp; spot</p>
+  <div class="mt-3 grid grid-cols-5 gap-3">
+    {
+      steels.map((s) => (
+        <div class={`${s.cls} border border-line rounded-md h-16 flex items-end p-2`}>
+          <span class="font-mono text-[10px] mix-blend-difference text-white">{s.name}</span>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Terminal palette (always-dark panel) -->
+  <p class="mt-8 font-mono text-xs uppercase tracking-widest text-faint">terminal — always dark</p>
+  <div class="mt-3 rounded-md border border-term-border bg-term-bg p-4">
+    <div class="rounded bg-term-panel p-4 font-mono text-sm leading-relaxed">
+      {
+        terms.map((t) => (
+          <div class={t.cls}>
+            <span class="text-term-dim">// </span>
+            {t.name} — const x = 42;
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Type scale -->
+  <p class="mt-10 font-mono text-xs uppercase tracking-widest text-faint">type — display / body / mono</p>
+  <div class="mt-3 space-y-4">
+    <h1 class="font-display font-extrabold text-6xl tracking-tight text-ink">Ground Control</h1>
+    <h2 class="font-display font-bold text-3xl tracking-tight text-ink">Bricolage Grotesque</h2>
+    <p class="font-body text-xl text-ink-2 max-w-[70ch] leading-relaxed">
+      Body copy is set in Newsreader, a serif that reads warm at length. <em>Italic threads in</em>
+      for emphasis without breaking the calm editorial rhythm of the page.
+    </p>
+    <p class="font-mono text-sm text-muted">
+      mono · IBM Plex Mono · 2026-06-09 · #the-connective-tissue · const status = "nominal";
+    </p>
+  </div>
+
+  <!-- Textures -->
+  <p class="mt-10 font-mono text-xs uppercase tracking-widest text-faint">textures</p>
+  <div class="mt-3 grid grid-cols-2 gap-3">
+    <div class="halftone border border-line rounded-md h-24 flex items-end p-2 opacity-60">
+      <span class="font-mono text-[10px] text-ink">halftone</span>
+    </div>
+    <div class="gridlines border border-line rounded-md h-24 flex items-end p-2">
+      <span class="font-mono text-[10px] text-ink">gridlines</span>
+    </div>
+  </div>
+
+  <!-- Pills -->
+  <p class="mt-10 font-mono text-xs uppercase tracking-widest text-faint">pills / badges</p>
+  <div class="mt-3 flex flex-wrap items-center gap-2">
+    <Pill variant="solid">note</Pill>
+    <Pill variant="steel">post</Pill>
+    <Pill>astro</Pill>
+    <Pill variant="ghost">build-in-public</Pill>
+  </div>
+
+  <!-- Buttons -->
+  <p class="mt-8 font-mono text-xs uppercase tracking-widest text-faint">buttons</p>
+  <div class="mt-3 flex flex-wrap items-center gap-3">
+    <Button href="#">View project →</Button>
+    <Button variant="ghost" href="#">Source</Button>
+    <Button variant="steel" href="#">Live ↗</Button>
+    <Button variant="link" href="#">read more →</Button>
+  </div>
+
+  <!-- Project card + list rows -->
+  <p class="mt-10 font-mono text-xs uppercase tracking-widest text-faint">project card · list rows</p>
+  <div class="mt-3 grid gap-5 md:grid-cols-2">
+    <ProjectCard
+      title="Stateless polling with overlapping windows"
+      thumbLabel="learning bytes"
+      badge={{ text: 'post', variant: 'steel' }}
+      meta="2026 · 4 min"
+      description="How a 10-min poll with a 15-min lookback kills stored state entirely — and triggers clean Cloudflare deploys."
+    />
+    <div>
+      <ListRow
+        title="The one-spot color rule"
+        date="2026 · 06 · 05"
+        badge={{ text: 'note', variant: 'solid' }}
+        description="Why scarcity reads as confidence in a muted palette."
+      />
+      <ListRow
+        title="Notion image URLs expire in an hour"
+        date="2026 · 05 · 21"
+        badge={{ text: 'post', variant: 'steel' }}
+        description="Download at build time, rewrite the markdown, or the site silently breaks."
+      />
+    </div>
+  </div>
+
+  <!-- Comic panel -->
+  <p class="mt-12 font-mono text-xs uppercase tracking-widest text-faint">comic panel — the one loud thing</p>
+  <div class="mt-6 flex justify-center py-6">
+    <ComicPanel src={avatar.src} alt="Avatar" captionStrong="✦" caption="now shipping" />
+  </div>
+
+  <!-- Terminal / CodeBlock -->
+  <p class="mt-10 font-mono text-xs uppercase tracking-widest text-faint">terminal — ghosted Tron</p>
+  <div class="mt-3">
+    <CodeBlock code={sampleCode} lang="ts" title="palette.ts" />
+  </div>
+</div>

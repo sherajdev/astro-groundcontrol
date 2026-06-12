@@ -1,0 +1,35 @@
+---
+import Pill from './Pill.astro';
+
+// Calm dated row (JSDev style): a fixed left rail of badge + date, then title
+// and blurb. Hairline divider; the last row's border is dropped by the parent
+// list via `last:border-b-0`.
+export interface Props {
+  title: string;
+  href?: string;
+  date?: string;
+  description?: string;
+  badge?: { text: string; variant?: 'default' | 'solid' | 'steel' | 'ghost' };
+}
+
+const { title, href = '#', date, description, badge } = Astro.props;
+---
+
+<div class="grid grid-cols-[104px_1fr] items-start gap-[18px] border-b border-line py-4 last:border-b-0">
+  <div class="flex flex-col gap-2">
+    {
+      badge && (
+        <Pill variant={badge.variant ?? 'default'} class="self-start">
+          {badge.text}
+        </Pill>
+      )
+    }
+    {date && <span class="font-mono text-[11px] text-faint">{date}</span>}
+  </div>
+  <div>
+    <h4 class="font-display text-[17px] font-semibold tracking-[-0.01em]">
+      <a href={href} class="text-ink transition-colors hover:text-steel-deep">{title}</a>
+    </h4>
+    {description && <p class="mt-1 text-sm text-muted">{description}</p>}
+  </div>
+</div>

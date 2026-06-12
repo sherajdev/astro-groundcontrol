@@ -1,0 +1,105 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+
+import Layout from '~/layouts/PageLayout.astro';
+import Button from '~/components/ui/Button.astro';
+import Pill from '~/components/ui/Pill.astro';
+import { getPermalink } from '~/utils/permalinks';
+
+export const prerender = true;
+
+export const getStaticPaths = (async () => {
+  const items = await getCollection('work', ({ data }) => !data.draft);
+  return items.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+
+const kicker = [data.year, data.role].filter(Boolean).join(' · ');
+
+const metadata = {
+  title: data.title,
+  description: data.excerpt,
+  openGraph: { type: 'article' },
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Header -->
+  <section class="border-b border-line">
+    <div class="mx-auto max-w-3xl px-6 pb-12 pt-14">
+      <a
+        href={getPermalink('/work')}
+        class="font-mono text-[11px] uppercase tracking-[0.12em] text-muted transition-colors hover:text-ink"
+      >
+        ← work
+      </a>
+
+      {
+        kicker && (
+          <div class="mt-7 flex items-center gap-3 font-mono text-[11.5px] uppercase tracking-[0.22em] text-steel-deep">
+            <span class="h-px w-[26px] bg-steel" />
+            {kicker}
+          </div>
+        )
+      }
+
+      <h1
+        class="mt-4 font-display text-[clamp(34px,5vw,58px)] font-extrabold leading-[0.98] tracking-[-0.03em] text-ink"
+      >
+        {data.title}
+      </h1>
+
+      {data.excerpt && <p class="mt-5 max-w-[60ch] font-body text-[19px] leading-relaxed text-ink-2">{data.excerpt}</p>}
+
+      {
+        (data.stack?.length || data.liveUrl || data.sourceUrl) && (
+          <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-4">
+            {data.stack?.length && (
+              <div class="flex flex-wrap gap-2">
+                {data.stack.map((s) => (
+                  <Pill>{s}</Pill>
+                ))}
+              </div>
+            )}
+            {(data.liveUrl || data.sourceUrl) && (
+              <div class="flex flex-wrap items-center gap-3">
+                {data.liveUrl && (
+                  <Button variant="steel" href={data.liveUrl} target="_blank">
+                    Live ↗
+                  </Button>
+                )}
+                {data.sourceUrl && (
+                  <Button variant="ghost" href={data.sourceUrl} target="_blank">
+                    Source ↗
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Body -->
+  <section>
+    <div class="mx-auto max-w-3xl px-6 py-14">
+      <article class="gc-prose">
+        <Content />
+      </article>
+
+      <div class="mt-16 border-t border-line pt-8">
+        <a
+          href={getPermalink('/work')}
+          class="font-mono text-[11px] uppercase tracking-[0.12em] text-muted transition-colors hover:text-ink"
+        >
+          ← back to work
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

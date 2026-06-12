@@ -1,0 +1,141 @@
+---
+import { Icon } from 'astro-icon/components';
+import Logo from '~/components/Logo.astro';
+import ToggleTheme from '~/components/common/ToggleTheme.astro';
+import ToggleMenu from '~/components/common/ToggleMenu.astro';
+
+import { getHomePermalink, trimSlash, getAsset } from '~/utils/permalinks';
+
+interface Link {
+  text?: string;
+  href?: string;
+  ariaLabel?: string;
+  icon?: string;
+}
+
+interface MenuLink extends Link {
+  links?: Array<MenuLink>;
+}
+
+export interface Props {
+  id?: string;
+  links?: Array<MenuLink>;
+  isSticky?: boolean;
+  isFullWidth?: boolean;
+  showToggleTheme?: boolean;
+  showRssFeed?: boolean;
+}
+
+const {
+  id = 'header',
+  links = [],
+  isSticky = false,
+  isFullWidth = false,
+  showToggleTheme = false,
+  showRssFeed = false,
+} = Astro.props;
+
+const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+
+// mono nav link: muted by default, ink on hover / when active. No spot here —
+// the brand dot already spends the page's spot budget.
+const linkBase = 'block whitespace-nowrap px-4 py-3 transition-colors md:py-2';
+---
+
+<header
+  class:list={[
+    { sticky: isSticky, relative: !isSticky },
+    'top-0 z-40 mx-auto w-full flex-none border-b border-line bg-bg/85 backdrop-blur-sm transition-colors',
+  ]}
+  {...isSticky ? { 'data-aw-sticky-header': true } : {}}
+  {...id ? { id } : {}}
+>
+  <div class:list={['relative mx-auto flex h-[58px] w-full items-center px-6', { 'max-w-6xl': !isFullWidth }]}>
+    <!-- Brand (+ mobile menu toggle) -->
+    <div class="flex flex-1 items-center justify-between md:flex-none">
+      <a class="flex items-center" href={getHomePermalink()}>
+        <Logo />
+      </a>
+      <div class="flex items-center gap-1 md:hidden">
+        {
+          showToggleTheme && (
+            <ToggleTheme
+              iconClass="h-5 w-5"
+              class="inline-flex items-center rounded p-2 text-muted transition-colors hover:text-ink"
+            />
+          )
+        }
+        <ToggleMenu />
+      </div>
+    </div>
+
+    <!-- Mono nav -->
+    <nav
+      class="hidden w-full overflow-y-auto overflow-x-hidden font-mono text-base tracking-[0.04em] md:ml-auto md:flex md:w-auto md:overflow-visible md:text-[12.5px]"
+      aria-label="Main navigation"
+    >
+      <ul class="flex w-full flex-col md:w-auto md:flex-row md:items-center md:gap-1">
+        {
+          links.map(({ text, href, links: sublinks }) => (
+            <li class={sublinks?.length ? 'dropdown' : ''}>
+              {sublinks?.length ? (
+                <>
+                  <button
+                    type="button"
+                    class="flex items-center whitespace-nowrap px-4 py-3 text-muted transition-colors hover:text-ink md:py-2"
+                  >
+                    {text} <Icon name="tabler:chevron-down" class="ml-1 hidden h-3 w-3 md:inline" />
+                  </button>
+                  <ul class="dropdown-menu rounded pl-4 font-mono md:absolute md:hidden md:min-w-[200px] md:border md:border-line md:bg-surface md:pl-0 md:shadow-lg">
+                    {sublinks.map(({ text: text2, href: href2 }) => (
+                      <li>
+                        <a
+                          class:list={[
+                            'block whitespace-nowrap px-5 py-2 transition-colors',
+                            href2 === currentPath ? 'text-ink' : 'text-muted hover:text-ink',
+                          ]}
+                          href={href2}
+                        >
+                          {text2}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <a class:list={[linkBase, href === currentPath ? 'text-ink' : 'text-muted hover:text-ink']} href={href}>
+                  {text}
+                </a>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Desktop actions: theme toggle (+ optional RSS). Mobile theme toggle lives beside the menu button. -->
+    <div class="hidden md:static md:ml-4 md:flex md:w-auto md:items-center md:p-0">
+      <div class="flex w-full items-center justify-end gap-1 md:w-auto">
+        {
+          showToggleTheme && (
+            <ToggleTheme
+              iconClass="h-5 w-5"
+              class="inline-flex items-center rounded p-2 text-muted transition-colors hover:text-ink"
+            />
+          )
+        }
+        {
+          showRssFeed && (
+            <a
+              class="inline-flex items-center rounded p-2 text-muted transition-colors hover:text-ink"
+              aria-label="RSS Feed"
+              href={getAsset('/rss.xml')}
+            >
+              <Icon name="tabler:rss" class="h-5 w-5" />
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</header>

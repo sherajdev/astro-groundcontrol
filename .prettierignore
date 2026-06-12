@@ -1,0 +1,12 @@
+dist
+node_modules
+.github
+.changeset
+
+# Docs + design source-of-truth — kept verbatim, not reformatted
+BUILD.md
+CLAUDE.md
+design/ground-control.html
+
+# Agent skills/config — tooling docs, not site source
+.claude

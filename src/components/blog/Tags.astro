@@ -1,0 +1,41 @@
+---
+import Pill from '~/components/ui/Pill.astro';
+import { getPermalink } from '~/utils/permalinks';
+import { APP_BLOG } from 'astrowind:config';
+import type { Post } from '~/types';
+
+export interface Props {
+  tags: Post['tags'];
+  class?: string;
+  title?: string | undefined;
+  isCategory?: boolean;
+}
+
+const { tags, class: className = '', title = undefined, isCategory = false } = Astro.props;
+const linkable = isCategory ? APP_BLOG?.category?.isEnabled : APP_BLOG?.tag?.isEnabled;
+---
+
+{
+  tags && Array.isArray(tags) && tags.length > 0 && (
+    <div class:list={['flex flex-wrap items-center gap-2', className]}>
+      {title !== undefined && (
+        <span class="mr-1 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">{title}</span>
+      )}
+      {tags.map((tag) =>
+        linkable ? (
+          <a href={getPermalink(tag.slug, isCategory ? 'category' : 'tag')} class="group">
+            <Pill class="lowercase transition-colors group-hover:border-steel group-hover:text-ink">
+              {isCategory ? '' : '#'}
+              {tag.title}
+            </Pill>
+          </a>
+        ) : (
+          <Pill class="lowercase">
+            {isCategory ? '' : '#'}
+            {tag.title}
+          </Pill>
+        )
+      )}
+    </div>
+  )
+}

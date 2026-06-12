@@ -1,0 +1,43 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Pill from '~/components/ui/Pill.astro';
+import Headline from '~/components/blog/Headline.astro';
+import { fetchPosts } from '~/utils/blog';
+import { getPermalink } from '~/utils/permalinks';
+import type { Taxonomy } from '~/types';
+
+const posts = await fetchPosts();
+
+const counts: Record<string, { tax: Taxonomy; count: number }> = {};
+for (const post of posts) {
+  const cat = post.category;
+  if (cat) {
+    counts[cat.slug] ??= { tax: cat, count: 0 };
+    counts[cat.slug].count++;
+  }
+}
+const categories = Object.values(counts).sort((a, b) => b.count - a.count || a.tax.title.localeCompare(b.tax.title));
+
+const metadata = { title: 'Categories' };
+---
+
+<Layout metadata={metadata}>
+  <section class="mx-auto max-w-4xl px-6 pb-24 pt-16">
+    <Headline kicker="index" subtitle="Posts grouped by category.">Categories</Headline>
+    {
+      categories.length === 0 ? (
+        <p class="font-mono text-sm text-muted">No categories yet.</p>
+      ) : (
+        <div class="flex flex-wrap gap-2">
+          {categories.map(({ tax, count }) => (
+            <a href={getPermalink(tax.slug, 'category')} class="group">
+              <Pill class="lowercase transition-colors group-hover:border-steel group-hover:text-ink">
+                {tax.title} <span class="ml-1.5 text-faint">{count}</span>
+              </Pill>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </section>
+</Layout>
