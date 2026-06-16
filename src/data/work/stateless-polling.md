@@ -14,6 +14,7 @@ tags:
   - architecture
 featured: true
 order: 2
+draft: true
 ---
 
 A scheduled job that polls an upstream API usually needs to remember **where it left
